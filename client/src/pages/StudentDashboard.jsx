@@ -5,6 +5,10 @@ import { api } from '../api/client';
 import { formatRange } from '../utils/time';
 import { LinkIcon } from '../components/Icons';
 
+function interviewerLabel(b) {
+  return b.role_title && b.company ? `${b.interviewer_name} — ${b.role_title} @ ${b.company}` : b.interviewer_name;
+}
+
 export default function StudentDashboard() {
   const { user, token, logout } = useAuth();
   const [bookings, setBookings] = useState([]);
@@ -90,9 +94,7 @@ export default function StudentDashboard() {
                 <div className="session-card glass" key={b.id}>
                   <div className="session-card-top">
                     <div className="booking-row-info">
-                      <strong>
-                        {b.interviewer_name} — {b.role_title} @ {b.company}
-                      </strong>
+                      <strong>{interviewerLabel(b)}</strong>
                       <span>{formatRange(b.start_time, b.end_time)}</span>
                     </div>
                     <span className="status-pill confirmed">Confirmed</span>
@@ -124,9 +126,7 @@ export default function StudentDashboard() {
               {pending.map((b) => (
                 <div className="booking-row glass" key={b.id}>
                   <div className="booking-row-info">
-                    <strong>
-                      {b.interviewer_name} — {b.role_title} @ {b.company}
-                    </strong>
+                    <strong>{interviewerLabel(b)}</strong>
                     <span>{formatRange(b.start_time, b.end_time)}</span>
                   </div>
                   <span className="status-pill pending">Awaiting response</span>
@@ -143,9 +143,7 @@ export default function StudentDashboard() {
               {past.map((b) => (
                 <div className="booking-row glass" key={b.id}>
                   <div className="booking-row-info">
-                    <strong>
-                      {b.interviewer_name} — {b.role_title} @ {b.company}
-                    </strong>
+                    <strong>{interviewerLabel(b)}</strong>
                     <span>{formatRange(b.start_time, b.end_time)}</span>
                   </div>
                   <span className={`status-pill ${b.status === 'completed' ? 'completed' : 'pending'}`}>
