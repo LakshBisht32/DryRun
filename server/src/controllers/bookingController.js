@@ -1,5 +1,25 @@
 const pool = require('../config/db');
 
+// Interviewers often paste a link without a scheme (e.g. "meet.google.com/abc-defg-hij").
+// Rendered as <a href="meet.google.com/abc-defg-hij">, a browser treats that as a path
+// relative to the current page instead of an external URL, so "Join session" silently
+// breaks. Normalize by assuming https when no scheme is present, then validate.
+function normalizeMeetingLink(rawLink) {
+  const trimmed = rawLink.trim();
+  const withScheme = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+  let parsed;
+  try {
+    parsed = new URL(withScheme);
+  } catch {
+    return null;
+  }
+  if (!/^https?:$/.test(parsed.protocol) || !parsed.hostname.includes('.')) {
+    return null;
+  }
+  return parsed.toString();
+}
+
 // The core concurrency-safe booking primitive: a single atomic conditional
 // UPDATE instead of read-then-write. If two requests race for the same slot,
 // only one UPDATE can flip status 'open' -> 'pending'; the loser sees 0 rows
@@ -65,6 +85,15 @@ async function loadBookingWithSlot(bookingOrClient, id) {
 async function acceptBooking(req, res) {
   const bookingId = req.params.id;
   const { meeting_link } = req.body;
+  let normalizedLink = null;
+
+  if (meeting_link) {
+    normalizedLink = normalizeMeetingLink(meeting_link);
+    if (!normalizedLink) {
+      return res.status(400).json({ error: 'meeting_link must be a valid URL' });
+    }
+  }
+
   const client = await pool.connect();
 
   try {
@@ -87,7 +116,7 @@ async function acceptBooking(req, res) {
     const updated = await client.query(
       `UPDATE bookings SET status = 'confirmed', confirmed_at = now(), meeting_link = COALESCE($2, meeting_link)
        WHERE id = $1 RETURNING *`,
-      [bookingId, meeting_link || null]
+      [bookingId, normalizedLink]
     );
     await client.query(`UPDATE slots SET status = 'booked' WHERE id = $1`, [booking.slot_id]);
 
@@ -145,6 +174,10 @@ async function setMeetingLink(req, res) {
   if (!meeting_link) {
     return res.status(400).json({ error: 'meeting_link is required' });
   }
+  const normalizedLink = normalizeMeetingLink(meeting_link);
+  if (!normalizedLink) {
+    return res.status(400).json({ error: 'meeting_link must be a valid URL' });
+  }
 
   const booking = await loadBookingWithSlot(pool, bookingId);
   if (!booking) {
@@ -159,7 +192,7 @@ async function setMeetingLink(req, res) {
 
   const updated = await pool.query(
     `UPDATE bookings SET meeting_link = $2 WHERE id = $1 RETURNING *`,
-    [bookingId, meeting_link]
+    [bookingId, normalizedLink]
   );
   res.json({ booking: updated.rows[0] });
 }
