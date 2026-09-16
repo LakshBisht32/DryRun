@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'student' });
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get('role') === 'interviewer' ? 'interviewer' : 'student';
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: initialRole });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 

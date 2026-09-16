@@ -48,3 +48,48 @@ export function ShieldCheckIcon(props) {
     </svg>
   );
 }
+
+export function SearchIcon(props) {
+  return (
+    <svg className="icon" width="20" height="20" viewBox="0 0 24 24" {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+
+export function VideoIcon(props) {
+  return (
+    <svg className="icon" width="20" height="20" viewBox="0 0 24 24" {...props}>
+      <rect x="2" y="6" width="14" height="12" rx="2" />
+      <path d="m22 8-6 4 6 4V8Z" />
+    </svg>
+  );
+}
+
+export function TrendUpIcon(props) {
+  return (
+    <svg className="icon" width="20" height="20" viewBox="0 0 24 24" {...props}>
+      <path d="M3 17 9 11l4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </svg>
+  );
+}
+
+export function CalendarIcon(props) {
+  return (
+    <svg className="icon" width="20" height="20" viewBox="0 0 24 24" {...props}>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  );
+}
+
+export function ShieldIcon(props) {
+  return (
+    <svg className="icon" width="20" height="20" viewBox="0 0 24 24" {...props}>
+      <path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
