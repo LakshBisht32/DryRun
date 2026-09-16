@@ -6,6 +6,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "db:init": "node src/db/init.js",
+    "test:concurrency": "node test-concurrency.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

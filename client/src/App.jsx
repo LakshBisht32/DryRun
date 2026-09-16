@@ -3,7 +3,11 @@ import Home from './pages/Home';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
+import StudentScorecards from './pages/StudentScorecards';
 import InterviewerDashboard from './pages/InterviewerDashboard';
+import InterviewerProfileEdit from './pages/InterviewerProfileEdit';
+import Interviewers from './pages/Interviewers';
+import InterviewerProfile from './pages/InterviewerProfile';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { GuestRoute } from './components/GuestRoute';
 import './App.css';
@@ -28,6 +32,10 @@ function App() {
           </GuestRoute>
         }
       />
+
+      <Route path="/interviewers" element={<Interviewers />} />
+      <Route path="/interviewers/:id" element={<InterviewerProfile />} />
+
       <Route
         path="/student"
         element={
@@ -37,10 +45,27 @@ function App() {
         }
       />
       <Route
+        path="/student/scorecards"
+        element={
+          <ProtectedRoute role="student">
+            <StudentScorecards />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/interviewer"
         element={
           <ProtectedRoute role="interviewer">
             <InterviewerDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/interviewer/profile"
+        element={
+          <ProtectedRoute role="interviewer">
+            <InterviewerProfileEdit />
           </ProtectedRoute>
         }
       />
